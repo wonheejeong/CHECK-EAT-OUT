@@ -8,7 +8,9 @@ from clarifai.rest import Image as ClImage
 import requests
 from watson_developer_cloud.websocket import RecognizeCallback
 
-UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image'
+
+
+UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
 
 
@@ -62,7 +64,7 @@ def upload_image_file():
             app_api = ClarifaiApp(api_key='e635a47197fd4904b470507b9d3cde08')
             model = app_api.models.get('food')
             model.model_version = 'dc3cf4800da84fd5ac2043d4205f5b45'
-            image = ClImage(file_obj=open('C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'+filename,'rb'))
+            image = ClImage(file_obj=open(UPLOAD_FOLDER+filename,'rb'))
             predict_json = model.predict([image])
             outputs = predict_json["outputs"]
             concepts = outputs[0]['data']['concepts']
@@ -94,7 +96,7 @@ def upload_voice_file():
             password = 'uENPXIuTACJy'
 
 
-            filepath = "C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\"+filename  # path to file
+            filepath = UPLOAD_FOLDER+filename  # path to file
             filename = os.path.basename(filepath)
 
             audio = open(filepath, 'rb')
