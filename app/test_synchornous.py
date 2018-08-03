@@ -42,7 +42,7 @@ def about():
     return render_template('about.html')
 
 
-# upload
+# new 
 
 def allowed_file(filename):
     return '.' in filename and \
