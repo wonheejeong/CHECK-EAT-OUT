@@ -9,9 +9,22 @@
 </form>
 
 <form action="/upload/voice" method="post" enctype="multipart/form-data" >
-    <input type='file' id='voicefile' name='file' accept="audio/*" capture="microphone"/>
-  <!--<button class="button1 white selected" onfocus="this.blur();">이미지 등록</button>-->
-    <input type="submit" value="음성 등록">
+    <!--<input type='file' id='voicefile' name='file' accept="audio/*" capture="microphone"/>-->
+  <!--&lt;!&ndash;<button class="button1 white selected" onfocus="this.blur();">이미지 등록</button>&ndash;&gt;-->
+    <!--<input type="submit" value="음성 등록">-->
+    <input type="file" accept="audio/*" capture="microphone" id="recorder">
+    <audio id="player" controls></audio>
+    <script>
+      var recorder = document.getElementById('recorder');
+      var player = document.getElementById('player')'
+
+      recorder.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        // Do something with the audio file.
+        player.src =  URL.createObjectURL(file);
+      });
+</script>
+     <input type="submit" value="음성 등록">
     <!---->
     <!--<script>-->
       <!--var recorder = document.getElementById('recorder');-->
