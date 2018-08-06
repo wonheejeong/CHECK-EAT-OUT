@@ -7,29 +7,13 @@ from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 import requests
 from watson_developer_cloud.websocket import RecognizeCallback
+from pydub import AudioSegment
 
 
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
-
-
-class MyRecognizeCallback(RecognizeCallback):
-    def __init__(self):
-        self.recognized_data = ""
-        RecognizeCallback.__init__(self)
-
-    def on_data(self, data):
-        # return render_template("result.html", json=json.dumps(data))
-        # print(data["results"][0]["alternatives"][0])
-        self.recognized_data = json.dumps(data, indent=2)
-        # self.recognized_data = data
-
-    def on_error(self, error):
-        return ('Error received: {}'.format(error))
-
-    def on_inactivity_timeout(self, error):
-        return ('Inactivity timeout: {}'.format(error))
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
+NOT_ALLOWED_EXTENSIONS = set(['mp4'])
 
 
 app = Flask(__name__)
@@ -49,6 +33,12 @@ def about():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+def not_allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in NOT_ALLOWED_EXTENSIONS
+
+
 
 
 @app.route('/upload/image', methods=['POST'])
@@ -84,32 +74,63 @@ def upload_image_file():
 
 @app.route('/upload/voice', methods=['POST'])
 def upload_voice_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Using Voice API
-
-            url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-            username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
-            password = 'uENPXIuTACJy'
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
 
-            filepath = UPLOAD_FOLDER+filename  # path to file
-            filename = os.path.basename(filepath)
+        # Using Voice API
 
-            audio = open(filepath, 'rb')
+        url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
+        username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
+        password = 'uENPXIuTACJy'
 
-            files_input = {
-                "audioFile": (filename, audio, 'audio/mp3')
-            }
 
-            r = requests.post(url, auth=(username, password),params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"}, headers={"Content-Type": "audio/mp3"}, files=files_input)
-            response = json.loads(r.text)
-            result = json.dumps(response)
+        filepath = UPLOAD_FOLDER+filename  # path to file
+        filename = os.path.basename(filepath)
 
-            return render_template("result.html", json=result)
+        audio = open(filepath, 'rb')
+
+        files_input = {
+            "audioFile": (filename, audio, 'audio/mp3')
+        }
+
+        r = requests.post(url, auth=(username, password),params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"}, headers={"Content-Type": "audio/mp3"}, files=files_input)
+        response = json.loads(r.text)
+        result = json.dumps(response)
+
+        return render_template("result.html", json=result)
+
+    if file and not_allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        filepath = UPLOAD_FOLDER + filename
+        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
+        m4a_audio.export(filepath.replace((filepath).split('.')[-1],'mp3'), format="mp3")
+
+        # Using Voice API
+
+        url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
+        username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
+        password = 'uENPXIuTACJy'
+
+         # path to file
+        filename = os.path.basename(filepath)
+
+        audio = open(filepath, 'rb')
+
+        files_input = {
+            "audioFile": (filename, audio, 'audio/mp3')
+        }
+
+        r = requests.post(url, auth=(username, password),
+                          params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
+                          headers={"Content-Type": "audio/mp3"}, files=files_input)
+        response = json.loads(r.text)
+        result = json.dumps(response)
+
+        return render_template("result.html", json=result)
 
 
 # Run
