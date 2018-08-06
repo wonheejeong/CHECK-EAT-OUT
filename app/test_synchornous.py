@@ -11,7 +11,7 @@ from watson_developer_cloud.websocket import RecognizeCallback
 
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
 class MyRecognizeCallback(RecognizeCallback):
