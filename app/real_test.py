@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template
 from werkzeug import secure_filename
 import json
@@ -5,11 +6,15 @@ from collections import OrderedDict
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 import requests
+from watson_developer_cloud.websocket import RecognizeCallback
 from pydub import AudioSegment
 import os
+
 import os.path
 
+import sys
 
+import subprocess
 
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
@@ -29,11 +34,14 @@ def about():
     return render_template('about.html')
 
 
-# new
+# new 
 
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+
 
 
 
@@ -75,12 +83,40 @@ def upload_voice_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
-        filepath = UPLOAD_FOLDER + filename
+        OUTPUT_DIR = UPLOAD_FOLDER
 
-        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
-        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
+        def main():
 
+            path = OUTPUT_DIR
 
+            filenames = [
+
+                filename
+
+                for filename
+
+                in os.listdir(path)
+
+                if filename.endswith('.m4a')
+
+            ]
+
+            for filename in filenames:
+                subprocess.call([
+
+                    "ffmpeg", "-i",
+
+                    os.path.join(path, filename),
+
+                    "-acodec", "libmp3lame", "-ab", "256k",
+
+                    os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
+
+                ])
+
+            return 0
+
+        main()
 
         # Using Voice API
 
