@@ -13,6 +13,7 @@ import os.path
 
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
+# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
@@ -76,9 +77,9 @@ def upload_voice_file():
 
         filepath = UPLOAD_FOLDER + filename
 
-        # m4a to mp3
         m4a_audio = AudioSegment.from_file(filepath, format="m4a")
         m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
+
 
 
         # Using Voice API
@@ -115,3 +116,4 @@ def upload_voice_file():
 # Run
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0')
+    # app.run(debug=True)
