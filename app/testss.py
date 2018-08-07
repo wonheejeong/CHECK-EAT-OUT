@@ -8,13 +8,13 @@ import subprocess
 
 
 
-OUTPUT_DIR = os.getcwd()
+OUTPUT_DIR = '/home/intern/check_eat_out/app/uploaded_files/'
 
 
 
 def main():
 
-    path = os.getcwd()
+    path = '/home/intern/check_eat_out/app/uploaded_files/'
     filenames = [
 
         filename
