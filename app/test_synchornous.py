@@ -17,8 +17,8 @@ import sys
 import subprocess
 
 
-# UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
-UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
+UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
+# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
