@@ -1,4 +1,3 @@
-import os
 from flask import Flask, request, render_template
 from werkzeug import secure_filename
 import json
@@ -6,19 +5,14 @@ from collections import OrderedDict
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 import requests
-from watson_developer_cloud.websocket import RecognizeCallback
 from pydub import AudioSegment
 import os
-import ffmpeg
 import os.path
 
-import sys
-
-import subprocess
 
 
-# UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
-UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
+
+UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
@@ -39,39 +33,6 @@ def about():
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-# m4a to mp3
-OUTPUT_DIR = UPLOAD_FOLDER
-
-def main():
-    path = OUTPUT_DIR
-
-    filenames = [
-
-        filename
-
-        for filename
-
-        in os.listdir(path)
-
-        if filename.endswith('.m4a')
-
-    ]
-
-    for filename in filenames:
-        subprocess.call([
-
-            "ffmpeg", "-i",
-
-            os.path.join(path, filename),
-
-            "-acodec", "libmp3lame", "-ab", "256k",
-
-            os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
-
-        ])
-
-    return 0
 
 
 
@@ -113,8 +74,11 @@ def upload_voice_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+        filepath = UPLOAD_FOLDER + filename
 
-
+        # m4a to mp3
+        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
+        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
 
 
         # Using Voice API
@@ -150,5 +114,4 @@ def upload_voice_file():
 
 # Run
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0')
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
