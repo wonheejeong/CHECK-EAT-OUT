@@ -6,15 +6,12 @@ import sys
 
 import subprocess
 
-
-
-OUTPUT_DIR = '/home/intern/check_eat_out/app/uploaded_files/'
-
+OUTPUT_DIR = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
 
 
 def main():
+    path = OUTPUT_DIR
 
-    path = '/home/intern/check_eat_out/app/uploaded_files/'
     filenames = [
 
         filename
@@ -25,12 +22,9 @@ def main():
 
         if filename.endswith('.m4a')
 
-        ]
-
-
+    ]
 
     for filename in filenames:
-
         subprocess.call([
 
             "ffmpeg", "-i",
@@ -41,14 +35,19 @@ def main():
 
             os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
 
-            ])
+        ])
 
     return 0
 
+# if __name__ == '__main__':
+#     status = main()
+#     sys.exit(status)
 
+
+# main()
 # function_namef(parameter)
 
-main()
+
 #
 # if __name__ == '__main__':
 #
