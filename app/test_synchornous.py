@@ -8,12 +8,18 @@ from clarifai.rest import Image as ClImage
 import requests
 from watson_developer_cloud.websocket import RecognizeCallback
 from pydub import AudioSegment
+import os
+
+import os.path
+
+import sys
+
+import subprocess
 
 
-
-UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3'])
-NOT_ALLOWED_EXTENSIONS = set(['mp4'])
+# UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
+UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
 app = Flask(__name__)
@@ -34,9 +40,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
-def not_allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in NOT_ALLOWED_EXTENSIONS
+
 
 
 
@@ -79,6 +83,40 @@ def upload_voice_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
+        OUTPUT_DIR = UPLOAD_FOLDER
+
+        def main():
+
+            path = OUTPUT_DIR
+
+            filenames = [
+
+                filename
+
+                for filename
+
+                in os.listdir(path)
+
+                if filename.endswith('.m4a')
+
+            ]
+
+            for filename in filenames:
+                subprocess.call([
+
+                    "ffmpeg", "-i",
+
+                    os.path.join(path, filename),
+
+                    "-acodec", "libmp3lame", "-ab", "256k",
+
+                    os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
+
+                ])
+
+            return 0
+
+        main()
 
         # Using Voice API
 
@@ -86,36 +124,12 @@ def upload_voice_file():
         username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
         password = 'uENPXIuTACJy'
 
+        # path to file
 
-        filepath = UPLOAD_FOLDER+filename  # path to file
-        filename = os.path.basename(filepath)
+        new_filename = filename.replace(str(filename.split(".")[1]),'mp3')
 
-        audio = open(filepath, 'rb')
+        filepath = UPLOAD_FOLDER + new_filename
 
-        files_input = {
-            "audioFile": (filename, audio, 'audio/mp3')
-        }
-
-        r = requests.post(url, auth=(username, password),params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"}, headers={"Content-Type": "audio/mp3"}, files=files_input)
-        response = json.loads(r.text)
-        result = json.dumps(response)
-
-        return render_template("result.html", json=result)
-
-    if file and not_allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        filepath = UPLOAD_FOLDER + filename
-        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
-        m4a_audio.export(filepath.replace((filepath).split('.')[-1],'mp3'), format="mp3")
-
-        # Using Voice API
-
-        url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-        username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
-        password = 'uENPXIuTACJy'
-
-         # path to file
         filename = os.path.basename(filepath)
 
         audio = open(filepath, 'rb')
@@ -133,6 +147,9 @@ def upload_voice_file():
         return render_template("result.html", json=result)
 
 
+
+
 # Run
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    # app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True)
