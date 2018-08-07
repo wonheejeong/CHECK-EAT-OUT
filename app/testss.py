@@ -6,8 +6,8 @@ import sys
 
 import subprocess
 
-OUTPUT_DIR = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
-
+# OUTPUT_DIR = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
+OUTPUT_DIR = '/home/intern/check_eat_out/app/uploaded_files'
 
 def main():
     path = OUTPUT_DIR
