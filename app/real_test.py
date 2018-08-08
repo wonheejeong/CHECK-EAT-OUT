@@ -34,7 +34,7 @@ def about():
     return render_template('about.html')
 
 
-# new 
+# new
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -79,42 +79,9 @@ def upload_voice_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-
-        OUTPUT_DIR = UPLOAD_FOLDER
-
-        def main():
-
-            path = OUTPUT_DIR
-
-            filenames = [
-
-                filename
-
-                for filename
-
-                in os.listdir(path)
-
-                if filename.endswith('.m4a')
-
-            ]
-
-            for filename in filenames:
-                subprocess.call([
-
-                    "ffmpeg", "-i",
-
-                    os.path.join(path, filename),
-
-                    "-acodec", "libmp3lame", "-ab", "256k",
-
-                    os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
-
-                ])
-
-            return 0
-
-        main()
-
+        filepath = UPLOAD_FOLDER + filename
+        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
+        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
         # Using Voice API
 
         url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
