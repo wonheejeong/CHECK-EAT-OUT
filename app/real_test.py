@@ -42,9 +42,6 @@ def allowed_file(filename):
 
 
 
-
-
-
 @app.route('/upload/image', methods=['POST'])
 def upload_image_file():
     if request.method == 'POST':
