@@ -108,7 +108,7 @@ def upload_voice_file():
 
                     os.path.join(path, filename),
 
-                    "-acodec", "libmp3lame", "-ab", "256k",
+                    "-acodec", "libavcodec ", "-ab", "256k",
 
                     os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
 
