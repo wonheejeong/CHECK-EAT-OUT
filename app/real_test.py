@@ -1,20 +1,10 @@
-import os
 from flask import Flask, request, render_template
 from werkzeug import secure_filename
-import json
 from collections import OrderedDict
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
-import requests
-from watson_developer_cloud.websocket import RecognizeCallback
 from pydub import AudioSegment
-import os
-
-import os.path
-
-import sys
-
-import subprocess
+import json, requests, os
 
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
@@ -67,8 +57,8 @@ def upload_image_file():
             for i in concepts:
                 rank.append({"ranknum": str(num), "name": i['name'], "value": str(round(i['value'] * 100, 2)) + '%'})
                 num += 1
-
             result["output"] = rank
+
             return render_template("result.html",json = json.dumps(result, ensure_ascii=False, indent="\t"), file=file)
 
 
@@ -80,8 +70,10 @@ def upload_voice_file():
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         filepath = UPLOAD_FOLDER + filename
+        #Conver file (m4a to mp3)
         m4a_audio = AudioSegment.from_file(filepath, format="m4a")
         m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
+        os.remove(filepath)
         # Using Voice API
 
         url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
@@ -91,17 +83,12 @@ def upload_voice_file():
         # path to file
 
         new_filename = filename.replace(str(filename.split(".")[1]),'mp3')
-
         filepath = UPLOAD_FOLDER + new_filename
-
         filename = os.path.basename(filepath)
-
         audio = open(filepath, 'rb')
-
         files_input = {
             "audioFile": (filename, audio, 'audio/mp3')
         }
-
         r = requests.post(url, auth=(username, password),
                           params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
                           headers={"Content-Type": "audio/mp3"}, files=files_input)
@@ -109,8 +96,6 @@ def upload_voice_file():
         result = json.dumps(response)
 
         return render_template("result.html", json=result)
-
-
 
 
 # Run
