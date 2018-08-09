@@ -42,9 +42,6 @@ def allowed_file(filename):
 
 
 
-
-
-
 @app.route('/upload/image', methods=['POST'])
 def upload_image_file():
     if request.method == 'POST':
@@ -84,43 +81,7 @@ def upload_voice_file():
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         filepath = UPLOAD_FOLDER + filename
         m4a_audio = AudioSegment.from_file(filepath, format="m4a")
-        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'flac'), format="flac")
-
-        # OUTPUT_DIR = UPLOAD_FOLDER
-        #
-        # def main():
-        #
-        #     path = OUTPUT_DIR
-        #
-        #     filenames = [
-        #
-        #         filename
-        #
-        #         for filename
-        #
-        #         in os.listdir(path)
-        #
-        #         if filename.endswith('.m4a')
-        #
-        #     ]
-        #
-        #     for filename in filenames:
-        #         subprocess.call([
-        #
-        #             "ffmpeg", "-i",
-        #
-        #             os.path.join(path, filename),
-        #
-        #             "-acodec", "libavcodec ", "-ab", "256k",
-        #
-        #             os.path.join(OUTPUT_DIR, '%s.wav' % filename[:-4])
-        #
-        #         ])
-        #
-        #     return 0
-        #
-        # main()
-
+        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
         # Using Voice API
 
         url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
@@ -128,8 +89,8 @@ def upload_voice_file():
         password = 'uENPXIuTACJy'
 
         # path to file
-        # new_filename = filename.replace(str(filename.split(".")[1]), 'mp3')
-        new_filename = filename.replace(str(filename.split(".")[1]),'flac')
+
+        new_filename = filename.replace(str(filename.split(".")[1]),'mp3')
 
         filepath = UPLOAD_FOLDER + new_filename
 
@@ -138,12 +99,12 @@ def upload_voice_file():
         audio = open(filepath, 'rb')
 
         files_input = {
-            "audioFile": (filename, audio, 'audio/flac')
+            "audioFile": (filename, audio, 'audio/mp3')
         }
 
         r = requests.post(url, auth=(username, password),
                           params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
-                          headers={"Content-Type": "audio/flac"}, files=files_input)
+                          headers={"Content-Type": "audio/mp3"}, files=files_input)
         response = json.loads(r.text)
         result = json.dumps(response)
 
