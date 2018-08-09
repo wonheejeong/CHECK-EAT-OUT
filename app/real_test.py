@@ -92,10 +92,9 @@ def upload_voice_file():
         r = requests.post(url, auth=(username, password),
                           params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
                           headers={"Content-Type": "audio/mp3"}, files=files_input)
-        response = json.loads(r.text)
-        result = json.dumps(response)
 
-        return render_template("result.html", json=result)
+
+        return render_template("result.html", audio=filepath ,json=r.text)
 
 
 # Run
