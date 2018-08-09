@@ -82,41 +82,44 @@ def upload_voice_file():
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        filepath = UPLOAD_FOLDER + filename
+        m4a_audio = AudioSegment.from_file(filepath, format="m4a")
+        m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'flac'), format="flac")
 
-        OUTPUT_DIR = UPLOAD_FOLDER
-
-        def main():
-
-            path = OUTPUT_DIR
-
-            filenames = [
-
-                filename
-
-                for filename
-
-                in os.listdir(path)
-
-                if filename.endswith('.m4a')
-
-            ]
-
-            for filename in filenames:
-                subprocess.call([
-
-                    "ffmpeg", "-i",
-
-                    os.path.join(path, filename),
-
-                    "-acodec", "libavcodec ", "-ab", "256k",
-
-                    os.path.join(OUTPUT_DIR, '%s.mp3' % filename[:-4])
-
-                ])
-
-            return 0
-
-        main()
+        # OUTPUT_DIR = UPLOAD_FOLDER
+        #
+        # def main():
+        #
+        #     path = OUTPUT_DIR
+        #
+        #     filenames = [
+        #
+        #         filename
+        #
+        #         for filename
+        #
+        #         in os.listdir(path)
+        #
+        #         if filename.endswith('.m4a')
+        #
+        #     ]
+        #
+        #     for filename in filenames:
+        #         subprocess.call([
+        #
+        #             "ffmpeg", "-i",
+        #
+        #             os.path.join(path, filename),
+        #
+        #             "-acodec", "libavcodec ", "-ab", "256k",
+        #
+        #             os.path.join(OUTPUT_DIR, '%s.wav' % filename[:-4])
+        #
+        #         ])
+        #
+        #     return 0
+        #
+        # main()
 
         # Using Voice API
 
@@ -125,8 +128,8 @@ def upload_voice_file():
         password = 'uENPXIuTACJy'
 
         # path to file
-
-        new_filename = filename.replace(str(filename.split(".")[1]),'mp3')
+        # new_filename = filename.replace(str(filename.split(".")[1]), 'mp3')
+        new_filename = filename.replace(str(filename.split(".")[1]),'flac')
 
         filepath = UPLOAD_FOLDER + new_filename
 
@@ -135,12 +138,12 @@ def upload_voice_file():
         audio = open(filepath, 'rb')
 
         files_input = {
-            "audioFile": (filename, audio, 'audio/mp3')
+            "audioFile": (filename, audio, 'audio/flac')
         }
 
         r = requests.post(url, auth=(username, password),
                           params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
-                          headers={"Content-Type": "audio/mp3"}, files=files_input)
+                          headers={"Content-Type": "audio/flac"}, files=files_input)
         response = json.loads(r.text)
         result = json.dumps(response)
 
