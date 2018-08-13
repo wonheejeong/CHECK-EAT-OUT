@@ -56,7 +56,7 @@ def upload_image_file():
                     num += 1
                 return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
             except:
-                return render_template("error.html")
+                return "에러다!!!!!!!!!!!"
 
 
 
