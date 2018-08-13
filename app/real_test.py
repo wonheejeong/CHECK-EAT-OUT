@@ -53,7 +53,7 @@ def upload_image_file():
             for i in concepts:
                 result.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
                 num += 1
-            return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'user_image/'+filename))
+            return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
 
 
 
@@ -94,7 +94,7 @@ def upload_voice_file():
             # html += "<input type='button' value=" + str(i["transcript"]) + "/>"
             result.insert(num, str(i["transcript"]))
             num += 1
-        return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'user_image/'+new_filename))
+        return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'uploaded_files/'+new_filename))
 
 
 # Run
