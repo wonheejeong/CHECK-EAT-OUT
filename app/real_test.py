@@ -1,13 +1,12 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, url_for
 from werkzeug import secure_filename
-from collections import OrderedDict
 from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 from pydub import AudioSegment
 import json, requests, os
 
 
-UPLOAD_FOLDER = '/home/intern/check_eat_out/app/uploaded_files/'
+UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
 # UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\user_image\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
@@ -49,17 +48,12 @@ def upload_image_file():
             predict_json = model.predict([image])
             outputs = predict_json["outputs"]
             concepts = outputs[0]['data']['concepts']
-            result = OrderedDict()
-            # output = OrderedDict()
-            rank = []
-            result["status"] = "Success"
-            num = 1
+            result = []
+            num = 0
             for i in concepts:
-                rank.append({"ranknum": str(num), "name": i['name'], "value": str(round(i['value'] * 100, 2)) + '%'})
+                result.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
                 num += 1
-            result["output"] = rank
-
-            return render_template("result.html",json = json.dumps(result, ensure_ascii=False, indent="\t"), file=file)
+            return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'user_image/'+filename))
 
 
 
@@ -92,9 +86,15 @@ def upload_voice_file():
         r = requests.post(url, auth=(username, password),
                           params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
                           headers={"Content-Type": "audio/mp3"}, files=files_input)
-
-
-        return render_template("result.html", audio=filepath ,json=r.text)
+        response =json.loads(r.text)
+        result = []
+        html = ""
+        num = 0
+        for i in response['results'][0]['alternatives']:
+            # html += "<input type='button' value=" + str(i["transcript"]) + "/>"
+            result.insert(num, str(i["transcript"]))
+            num += 1
+        return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'user_image/'+new_filename))
 
 
 # Run
