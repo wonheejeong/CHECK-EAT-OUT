@@ -6,8 +6,8 @@ from pydub import AudioSegment
 import json, requests, os
 
 
-# UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
-UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\user_image\\'
+UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
+# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\user_image\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
 
 
@@ -106,5 +106,5 @@ def upload_voice_file():
 
 # Run
 if __name__ == '__main__':
-    # app.run(debug=True, host='0.0.0.0')
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0')
+    # app.run(debug=True)
