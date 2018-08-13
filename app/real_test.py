@@ -36,24 +36,28 @@ def upload_image_file():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # url = redirect(url_for('uploaded_file', filename=filename))
+            try:
+                filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                # url = redirect(url_for('uploaded_file', filename=filename))
 
-            # Using Image API
-            app_api = ClarifaiApp(api_key='e635a47197fd4904b470507b9d3cde08')
-            model = app_api.models.get('food')
-            model.model_version = 'dc3cf4800da84fd5ac2043d4205f5b45'
-            image = ClImage(file_obj=open(UPLOAD_FOLDER+filename,'rb'))
-            predict_json = model.predict([image])
-            outputs = predict_json["outputs"]
-            concepts = outputs[0]['data']['concepts']
-            result = []
-            num = 0
-            for i in concepts:
-                result.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
-                num += 1
-            return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+                # Using Image API
+                app_api = ClarifaiApp(api_key='e635a47197fd4904b470507b9d3cde08')
+                model = app_api.models.get('food')
+                model.model_version = 'dc3cf4800da84fd5ac2043d4205f5b45'
+                image = ClImage(file_obj=open(UPLOAD_FOLDER+filename,'rb'))
+                predict_json = model.predict([image])
+                outputs = predict_json["outputs"]
+                concepts = outputs[0]['data']['concepts']
+                result = []
+                num = 0
+                for i in concepts:
+                    result.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
+                    num += 1
+                return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+            except IndexError:
+                return render_template("error.html")
+
 
 
 
