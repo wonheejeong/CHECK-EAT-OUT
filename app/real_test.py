@@ -66,45 +66,44 @@ def upload_image_file():
 def upload_voice_file():
     file = request.files['file']
     if file and allowed_file(file.filename):
-        # try:
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        filepath = UPLOAD_FOLDER + filename
-        audiotype = filename.split(".")[1]
-        if audiotype =='m4a':
-            #Conver file (m4a to mp3)
-            m4a_audio = AudioSegment.from_file(filepath, format="m4a")
-            m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
-            os.remove(filepath)
-            filename = filename.replace(str(filename.split(".")[1]), 'mp3')
-        else:
-            filename = filename
-        # Using Voice API
-        url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-        username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
-        password = 'uENPXIuTACJy'
+        try:
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            filepath = UPLOAD_FOLDER + filename
+            audiotype = filename.split(".")[1]
+            if audiotype =='m4a':
+                #Conver file (m4a to mp3)
+                m4a_audio = AudioSegment.from_file(filepath, format="m4a")
+                m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
+                os.remove(filepath)
+                filename = filename.replace(str(filename.split(".")[1]), 'mp3')
+                audiotype = 'mp3'
+            else:
+                filename = filename
+            # Using Voice API
+            url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
+            username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
+            password = 'uENPXIuTACJy'
 
-        # path to file
-        filepath = UPLOAD_FOLDER + filename
-        audio = open(filepath, 'rb')
-        files_input = {
-            "audioFile": (filename, audio, 'audio/mp3')
-        }
-        r = requests.post(url, auth=(username, password),
-                          params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
-                          headers={"Content-Type": "audio/"+ audiotype }, files=files_input)
-        response =json.loads(r.text)
-        result = []
-        html = ""
-        num = 0
+            # path to file
+            filepath = UPLOAD_FOLDER + filename
+            audio = open(filepath, 'rb')
+            files_input = {
+                "audioFile": (filename, audio, 'audio/'+ audiotype)
+            }
+            r = requests.post(url, auth=(username, password),
+                              params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
+                              headers={"Content-Type": "audio/"+ audiotype }, files=files_input)
+            response =json.loads(r.text)
+            result = []
+            num = 0
 
-        # for i in response['results'][0]['alternatives']:
-        #     # html += "<input type='button' value=" + str(i["transcript"]) + "/>"
-        #     result.insert(num, str(i["transcript"]))
-        #     num += 1
-        return render_template("voice_result.html", json=response, filepath = url_for('static', filename= 'uploaded_files/'+filename))
-        # except:
-        #     return render_template("error.html")
+            for i in response['results'][0]['alternatives']:
+                result.insert(num, str(i["transcript"]))
+                num += 1
+            return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+        except:
+            return render_template("error.html")
         #TypeError -> 파일 형식 확인해주세요. KeyError->
 
 # Run
