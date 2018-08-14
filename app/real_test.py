@@ -4,11 +4,12 @@ from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 from pydub import AudioSegment
 import json, requests, os
-
+# from flaskr import init_db
+# init_db()
 
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
-# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\user_image\\'
-ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a'])
+# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\uploaded_files\\'
+ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a', 'wav', 'mpeg', 'flac'])
 
 
 app = Flask(__name__)
@@ -44,7 +45,7 @@ def upload_image_file():
                 # Using Image API
                 app_api = ClarifaiApp(api_key='e635a47197fd4904b470507b9d3cde08')
                 model = app_api.models.get('food')
-                model.model_version = 'dc3cf4800da84fd5ac2043d4205f5b45'
+                model.model_version = '27fc125e385846b1a9fbc69480c774db'
                 image = ClImage(file_obj=open(UPLOAD_FOLDER+filename,'rb'))
                 predict_json = model.predict([image])
                 outputs = predict_json["outputs"]
@@ -56,7 +57,7 @@ def upload_image_file():
                     num += 1
                 return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
             except:
-                return "에러다!!!!!!!!!!!"
+                return render_template("error.html")
 
 
 
@@ -65,44 +66,46 @@ def upload_image_file():
 def upload_voice_file():
     file = request.files['file']
     if file and allowed_file(file.filename):
-        try:
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            filepath = UPLOAD_FOLDER + filename
+        # try:
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        filepath = UPLOAD_FOLDER + filename
+        audiotype = filename.split(".")[1]
+        if audiotype =='m4a':
             #Conver file (m4a to mp3)
             m4a_audio = AudioSegment.from_file(filepath, format="m4a")
             m4a_audio.export(filepath.replace((filepath).split('.')[-1], 'mp3'), format="mp3")
             os.remove(filepath)
-            # Using Voice API
+            filename = filename.replace(str(filename.split(".")[1]), 'mp3')
+        else:
+            filename = filename
+        # Using Voice API
+        url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
+        username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
+        password = 'uENPXIuTACJy'
 
-            url = "https://stream.watsonplatform.net/speech-to-text/api/v1/recognize"
-            username = 'e7a9eb3e-ab96-4456-9fc5-6d94831b4b8e'
-            password = 'uENPXIuTACJy'
+        # path to file
+        filepath = UPLOAD_FOLDER + filename
+        audio = open(filepath, 'rb')
+        files_input = {
+            "audioFile": (filename, audio, 'audio/mp3')
+        }
+        r = requests.post(url, auth=(username, password),
+                          params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
+                          headers={"Content-Type": "audio/"+ audiotype }, files=files_input)
+        response =json.loads(r.text)
+        result = []
+        html = ""
+        num = 0
 
-            # path to file
-
-            new_filename = filename.replace(str(filename.split(".")[1]),'mp3')
-            filepath = UPLOAD_FOLDER + new_filename
-            filename = os.path.basename(filepath)
-            audio = open(filepath, 'rb')
-            files_input = {
-                "audioFile": (filename, audio, 'audio/mp3')
-            }
-            r = requests.post(url, auth=(username, password),
-                              params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
-                              headers={"Content-Type": "audio/mp3"}, files=files_input)
-            response =json.loads(r.text)
-            result = []
-            html = ""
-            num = 0
-            for i in response['results'][0]['alternatives']:
-                # html += "<input type='button' value=" + str(i["transcript"]) + "/>"
-                result.insert(num, str(i["transcript"]))
-                num += 1
-            return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'uploaded_files/'+new_filename))
-        except:
-            return render_template("error.html")
-
+        # for i in response['results'][0]['alternatives']:
+        #     # html += "<input type='button' value=" + str(i["transcript"]) + "/>"
+        #     result.insert(num, str(i["transcript"]))
+        #     num += 1
+        return render_template("voice_result.html", json=response, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+        # except:
+        #     return render_template("error.html")
+        #TypeError -> 파일 형식 확인해주세요. KeyError->
 
 # Run
 if __name__ == '__main__':
