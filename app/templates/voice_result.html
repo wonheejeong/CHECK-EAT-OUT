@@ -1,14 +1,15 @@
 {% extends "layout.html" %}
 {% block content %}
-file:
+<div>
 <audio src={{filepath}} contorls></audio>
-<br/>
-result:
+</div>
+<div>
 <input type='button' value={{json[0]}} />
 <input type='button' value={{json[1]}} />
 <input type='button' value={{json[2]}} />
 <input type='button' value={{json[3]}} />
 <input type='button' value={{json[4]}} />
+</div>
 
 
 {% endblock %}
