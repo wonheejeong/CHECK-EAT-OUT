@@ -40,13 +40,13 @@ def get_nutrition(query):
     table = table2.findAll("item")
     view_list = ['식품이름:', '1회 제공량(g):', '열량(kcal):', '탄수화물(g):', '단백질(g):', '지방(g):', '당류(g):', '나트륨(g):', '콜레스테롤(g):',
                  '포화지방산(g):', '트랜스지방산(g):']
-    result = ""
+    result = []
     num = 0
 
     for i in table:
         text = table[num].findAll(text=True)
         for i in range(0, 11):
-            result += view_list[i] + str(text[i * 2 + 1]) + '\n'
+            result.insert(i,view_list[i] + str(text[i * 2 + 1]) + '\n')
             i += 1
         num += 1
 
@@ -117,13 +117,15 @@ def upload_voice_file():
                               params={"model": "ko-KR_BroadbandModel", "max_alternatives": "5"},
                               headers={"Content-Type": "audio/"+ audiotype }, files=files_input)
             response =json.loads(r.text)
-            result = []
+            result_web = []
+            result_get = []
             num = 0
 
             for i in response['results'][0]['alternatives']:
-                result.insert(num, str(i["transcript"]))
+                result_web.insert(num, str(i["transcript"]))
+                result_get.insert(num, str(i["transcript"]))
                 num += 1
-            return render_template("voice_result.html", json=result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+            return render_template("voice_result.html", json=result_web,nutrition = get_nutrition(result_get), filepath = url_for('static', filename= 'uploaded_files/'+filename))
         except:
             return render_template("error.html")
         #TypeError -> 파일 형식 확인해주세요. KeyError->
