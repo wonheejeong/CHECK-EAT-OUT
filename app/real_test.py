@@ -4,6 +4,8 @@ from clarifai.rest import ClarifaiApp
 from clarifai.rest import Image as ClImage
 from pydub import AudioSegment
 import json, requests, os
+from bs4 import BeautifulSoup
+
 # from flaskr import init_db
 # init_db()
 
@@ -30,7 +32,25 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
+def get_nutrition(query):
+    url = 'http://apis.data.go.kr/1470000/FoodNtrIrdntInfoService/getFoodNtrItdntList?serviceKey=5gR2Yl0HMrZtrAyfCxoqBEGhVZZAQz8S7YwV0NHpE%2BJWewgStQHnEzze%2BKPEHJ3gHrlkg2RfKvASvVmsZulyAQ%3D%3D&desc_kor={}&pageNo=1&startPage=1&numOfRows=1&pageSize=1'.format(query)
+    response = requests.get(url)
+    soup = BeautifulSoup(response.text, 'html.parser')
+    table2 = soup.find("items")
+    table = table2.findAll("item")
+    view_list = ['식품이름:', '1회 제공량(g):', '열량(kcal):', '탄수화물(g):', '단백질(g):', '지방(g):', '당류(g):', '나트륨(g):', '콜레스테롤(g):',
+                 '포화지방산(g):', '트랜스지방산(g):']
+    result = ""
+    num = 0
 
+    for i in table:
+        text = table[num].findAll(text=True)
+        for i in range(0, 11):
+            result += view_list[i] + str(text[i * 2 + 1]) + '\n'
+            i += 1
+        num += 1
+
+    return result
 
 @app.route('/upload/image', methods=['POST'])
 def upload_image_file():
@@ -50,12 +70,14 @@ def upload_image_file():
                 predict_json = model.predict([image])
                 outputs = predict_json["outputs"]
                 concepts = outputs[0]['data']['concepts']
-                result = []
+                result_web = []
+                result_get = []
                 num = 0
                 for i in concepts:
-                    result.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
+                    result_get.insert(num, i['name'])
+                    result_web.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
                     num += 1
-                return render_template("image_result.html",json = result, filepath = url_for('static', filename= 'uploaded_files/'+filename))
+                return render_template("image_result.html",json = result_web ,nutrition=get_nutrition(result_get[0]), filepath = url_for('static', filename= 'uploaded_files/'+filename))
             except:
                 return render_template("error.html")
 

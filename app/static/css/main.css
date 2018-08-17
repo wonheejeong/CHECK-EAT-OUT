@@ -941,7 +941,7 @@
       border-radius: 0.375em;
       border: 0;
       box-shadow: inset 0 0 0 2px #E3CEF6;
-      color: #E3CEF6 !important;
+      color: #444444 !important;
       cursor: pointer;
       display: inline-block;
       font-family: "Roboto Slab", serif;
@@ -1496,7 +1496,6 @@
 
          #main > .inner > section {
             padding: 6em 0 4em 0 ;
-            border-top: solid 2px rgba(210, 215, 217, 0.75);
          }
 
             #main > .inner > section:first-of-type {
@@ -1957,16 +1956,18 @@
 /* Change */
 #change div{
     align:center;
+    display: block;
     }
 
 
 
 #change {
+    align:
    padding: 6em 0 4em 0 ;
    display: -moz-flex;
    display: -webkit-flex;
    display: -ms-flex;
-   display: flex;
+   display: block;
 }
 
    #change h1 {
@@ -1997,6 +1998,7 @@
       display: block;
       margin: 0 0 2em 4em;
       width: 50%;
+      height: auto;
    }
 
       #change .image img {
@@ -2009,6 +2011,7 @@
          -ms-object-position: center;
          object-position: center;
          width: 100%;
+         height: auto;
       }
 
    @media screen and (orientation: portrait) {
@@ -2050,6 +2053,7 @@
             max-height: 50vh;
             min-height: 18em;
             width: 100%;
+            height: 100%
          }
 
    }
@@ -2196,6 +2200,7 @@
     width:30%;
     height:500px;
     background-color:#F5EFFB;
+    color: black;
     }
 
 
