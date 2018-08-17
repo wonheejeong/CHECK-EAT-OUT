@@ -125,7 +125,7 @@ def upload_voice_file():
                 result_web.insert(num, str(i["transcript"]))
                 result_get.insert(num, str(i["transcript"]))
                 num += 1
-            return render_template("voice_result.html", json=result_web,nutrition = get_nutrition(result_get), filepath = url_for('static', filename= 'uploaded_files/'+filename))
+            return render_template("voice_result.html", json=result_web, nutrition=get_nutrition(result_get[0]), filepath = url_for('static', filename= 'uploaded_files/'+filename))
         except:
             return render_template("error.html")
         #TypeError -> 파일 형식 확인해주세요. KeyError->
