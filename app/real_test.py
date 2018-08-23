@@ -38,15 +38,13 @@ def get_nutrition(query):
     soup = BeautifulSoup(response.text, 'html.parser')
     table2 = soup.find("items")
     table = table2.findAll("item")
-    view_list = ['식품이름:', '1회 제공량(g):', '열량(kcal):', '탄수화물(g):', '단백질(g):', '지방(g):', '당류(g):', '나트륨(g):', '콜레스테롤(g):',
-                 '포화지방산(g):', '트랜스지방산(g):']
     result = []
     num = 0
 
     for i in table:
         text = table[num].findAll(text=True)
         for i in range(0, 11):
-            result.insert(i,view_list[i] + str(text[i * 2 + 1]) + '\n')
+            result.insert(i, str(text[i * 2 + 1]))
             i += 1
         num += 1
 

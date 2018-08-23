@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% block content %}
-
-<form action="/upload/image" method="post" enctype="multipart/form-data" >
+<div class="center">
+<form style="display:block" action="/upload/image" method="post" enctype="multipart/form-data" >
     <input type='file' id='imagefile' name='file' />
   <!--<button class="button1 white selected" onfocus="this.blur();">이미지 등록</button>-->
     <input type="submit" value="이미지 등록">
@@ -15,5 +15,5 @@
 
 
 </form>
-
+</div>
 {% endblock %}

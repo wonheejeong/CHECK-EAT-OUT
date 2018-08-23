@@ -2186,11 +2186,39 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 30%;
+    width: 100%;
     padding:10px;
 
 }
+form {
 
+        margin: 0 auto;
+
+        width:250px;
+
+    }
+form input{
+        margin: 0 auto;
+
+        width:250px;
+
+}
+input{
+        margin: 0 auto;
+
+        width:250px;
+
+}
+
+
+/* result */
+.img_result {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+    padding:10px;
+}
 
 /* About */
 
