@@ -1,0 +1,10 @@
+{% extends "layout.html" %}
+{% block content %}
+{% for i in result %}
+<div class="center">
+    <input class="center2" type='button' value={{i[0]}} />
+    <input class="center2" type='button' value={{i[1]}} />
+    <img class="center" src={{i[2]}}  onerror="this.style.display='none'" alt=''/>
+</div>
+{% endfor %}
+{% endblock %}

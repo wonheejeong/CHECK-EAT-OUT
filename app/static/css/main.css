@@ -1957,6 +1957,10 @@
 #change div{
     align:center;
     display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+    padding: 10px;
     }
 
 
@@ -2186,10 +2190,20 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 100%;
+    width: 70%;
     padding:10px;
 
 }
+
+.center2  {
+    display: inline;
+    margin-left: auto;
+
+    margin-right: auto;
+    padding:10px;
+
+}
+
 form {
 
         margin: 0 auto;
@@ -2198,12 +2212,6 @@ form {
 
     }
 form input{
-        margin: 0 auto;
-
-        width:250px;
-
-}
-input{
         margin: 0 auto;
 
         width:250px;

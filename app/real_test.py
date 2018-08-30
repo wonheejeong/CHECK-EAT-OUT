@@ -5,10 +5,10 @@ from clarifai.rest import Image as ClImage
 from pydub import AudioSegment
 import json, requests, os
 from bs4 import BeautifulSoup
-
-# from flaskr import init_db
-# init_db()
-
+from app.models.database import Record, db
+from datetime import datetime
+import pymysql, array
+import numpy as np
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
 # UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\uploaded_files\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a', 'wav', 'mpeg', 'flac'])
@@ -16,15 +16,33 @@ ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://intern:intern123@127.0.0.1/check_eat_out_db"
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+db.init_app(app)
+
 
 @app.route('/')
 def home():
     return render_template('home.html')
 
+
 @app.route('/about')
 def about():
     return render_template('about.html')
 
+
+# @app.route('/insert_test')
+# def insert_test():
+#     r = Record(
+#         time=datetime.now(),
+#         tag="test_tag",
+#         filepath="/test/file/path"
+#     )
+#     db.session.add(r)
+#     db.session.commit()
+#
+#     return "inserted!"
+#
 
 # new
 
@@ -75,11 +93,21 @@ def upload_image_file():
                     result_get.insert(num, i['name'])
                     result_web.insert(num, i['name'] + str(round(i['value'] * 100, 2)) + '%')
                     num += 1
+
+                #Insert DB
+                r = Record(
+                    time=datetime.now(),
+                    tag=result_get[0],
+                    filepath=url_for('static', filename= 'uploaded_files/'+filename)
+                )
+                db.session.add(r)
+                db.session.commit()
+
+
+
                 return render_template("image_result.html",json = result_web ,nutrition=get_nutrition(result_get[0]), filepath = url_for('static', filename= 'uploaded_files/'+filename))
             except:
                 return render_template("error.html")
-
-
 
 
 @app.route('/upload/voice', methods=['POST'])
@@ -123,10 +151,54 @@ def upload_voice_file():
                 result_web.insert(num, str(i["transcript"]))
                 result_get.insert(num, str(i["transcript"]))
                 num += 1
+
+            # Insert DB
+            r = Record(
+                time=datetime.now(),
+                tag=result_get[0],
+                filepath=url_for('static', filename='uploaded_files/' + filename)
+            )
+            db.session.add(r)
+            db.session.commit()
+
             return render_template("voice_result.html", json=result_web, nutrition=get_nutrition(result_get[0]), filepath = url_for('static', filename= 'uploaded_files/'+filename))
         except:
             return render_template("error.html")
         #TypeError -> 파일 형식 확인해주세요. KeyError->
+
+
+@app.route('/record')
+def record():
+    # MySQL Connection 연결
+    conn = pymysql.connect(host='localhost', user='root', password='password', db='check_eat_out_db', charset='utf8')
+
+    # Connection 으로부터 Cursor 생성
+    curs = conn.cursor()
+
+    # SQL문 실행
+    sql = "select * from Record"
+    number_of_rows = curs.execute(sql)
+    rows = curs.fetchall()
+    result = []
+    num = 0
+    for i in range(number_of_rows):
+        result.insert(num, rows[i])
+        num += 1
+    conn.close()
+    num = 0
+    result2 = []
+    for i in result:
+        result2.insert(num, list(result[num]))
+        num += 1
+    # result3 = result2
+    # num = 0
+    # for i in result3:
+    #     result3[num][1] = '"' + result2[num][1] + '"'
+    #     result3[num][2] = '"' + result2[num][2] + '"'
+    #     num += 1
+
+    return render_template('record.html', result = result2)
+
 
 # Run
 if __name__ == '__main__':
