@@ -7,8 +7,7 @@ import json, requests, os
 from bs4 import BeautifulSoup
 from models.database import Record, db
 from datetime import datetime
-import pymysql, array
-import numpy as np
+import pymysql
 UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
 # UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\uploaded_files\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a', 'wav', 'mpeg', 'flac'])
