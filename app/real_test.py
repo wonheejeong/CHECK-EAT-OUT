@@ -8,14 +8,15 @@ from bs4 import BeautifulSoup
 from models.database import Record, db
 from datetime import datetime
 import pymysql
-UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
-# UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\uploaded_files\\'
+# UPLOAD_FOLDER = '/home/intern/check_eat_out/app/static/uploaded_files/'
+UPLOAD_FOLDER = 'C:\\Users\\LS-COM-00025\\LifeSemantics\\flask\\CheckEatOut\\app\\static\\uploaded_files\\'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'mp3', 'm4a', 'wav', 'mpeg', 'flac'])
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://intern:intern123@127.0.0.1/check_eat_out_db"
+# app.config['SQLALCHEMY_DATABASE_URI'] = "mysql+pymysql://root:password@127.0.0.1/check_eat_out_db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db.init_app(app)
 
@@ -72,7 +73,7 @@ def upload_image_file():
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            try:
+            # try:
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 # url = redirect(url_for('uploaded_file', filename=filename))
@@ -105,8 +106,8 @@ def upload_image_file():
 
 
                 return render_template("image_result.html",json = result_web ,nutrition=get_nutrition(result_get[0]), filepath = url_for('static', filename= 'uploaded_files/'+filename))
-            except:
-                return render_template("error.html")
+            # except:
+            #     return render_template("error.html")
 
 
 @app.route('/upload/voice', methods=['POST'])
@@ -170,7 +171,7 @@ def upload_voice_file():
 def record():
     # MySQL Connection 연결
     conn = pymysql.connect(host='localhost', user='intern', password='intern123', db='check_eat_out_db', charset='utf8')
-
+    # conn = pymysql.connect(host='localhost', user='root', password='password', db='check_eat_out_db', charset='utf8')
     # Connection 으로부터 Cursor 생성
     curs = conn.cursor()
 
