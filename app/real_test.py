@@ -176,7 +176,7 @@ def record():
     curs = conn.cursor()
 
     # SQL문 실행
-    sql = "select * from Record"
+    sql = "select * from record"
     number_of_rows = curs.execute(sql)
     rows = curs.fetchall()
     result = []
