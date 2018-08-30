@@ -5,7 +5,7 @@ from clarifai.rest import Image as ClImage
 from pydub import AudioSegment
 import json, requests, os
 from bs4 import BeautifulSoup
-from app.models.database import Record, db
+from models.database import Record, db
 from datetime import datetime
 import pymysql, array
 import numpy as np
