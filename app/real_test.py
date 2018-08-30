@@ -169,7 +169,7 @@ def upload_voice_file():
 @app.route('/record')
 def record():
     # MySQL Connection 연결
-    conn = pymysql.connect(host='localhost', user='root', password='password', db='check_eat_out_db', charset='utf8')
+    conn = pymysql.connect(host='localhost', user='intern', password='intern123', db='check_eat_out_db', charset='utf8')
 
     # Connection 으로부터 Cursor 생성
     curs = conn.cursor()
