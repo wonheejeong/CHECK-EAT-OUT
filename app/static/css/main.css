@@ -2190,7 +2190,7 @@
     display: block;
     margin-left: auto;
     margin-right: auto;
-    width: 70%;
+    width: 100%;
     padding:10px;
 
 }
@@ -2198,7 +2198,7 @@
 .center2  {
     display: inline;
     margin-left: auto;
-
+    width: 100%;
     margin-right: auto;
     padding:10px;
 
