@@ -1,11 +1,11 @@
 # CHECK-EAT-OUT 
 
 
-<p align="center">	<p align="center">
-<br><br>	<br><br>
-<img width =200 src = "https://user-images.githubusercontent.com/28107452/48788146-8bd36b80-ed2d-11e8-8894-1aebb567d113.png">	<img width =200 src = "https://user-images.githubusercontent.com/28107452/49039284-b37d7480-f202-11e8-81b6-f041ebd3351a.png">
-</p>	</p>
-<br><br>	<br><br>
+<p align="center">	
+<br><br>
+<img width =200 src = "https://user-images.githubusercontent.com/28107452/48788146-8bd36b80-ed2d-11e8-8894-1aebb567d113.png">	
+</p>	
+<br><br>	
 
  Description
 ---------------	
@@ -31,7 +31,7 @@ CHECK EAT OUT을 이용하면 하루 섭취한 음식을 기록하고 그를 점
 ![image](https://user-images.githubusercontent.com/28107452/48790289-5ed58780-ed32-11e8-9740-efeb5783ccb2.png)
  <br>	
 
- 3. Result page	<br><br>
+ 3. Result page	
 ![image](https://user-images.githubusercontent.com/28107452/48790379-8af10880-ed32-11e8-87e7-7e0581137d22.png)
  <br>	
  4. Record Page	
