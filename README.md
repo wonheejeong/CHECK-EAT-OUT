@@ -21,6 +21,7 @@ With CHECK EAT OUT, you will be able to record your daily intake of food and che
 CHECK EAT OUT을 이용하면 하루 섭취한 음식을 기록하고 그를 점검해 보다 건강한 식생활을 즐길 수 있게 될 것입니다.	
  <br><br>	
  
+ 
  ScreenShot	
 --------------	
 
@@ -34,8 +35,10 @@ CHECK EAT OUT을 이용하면 하루 섭취한 음식을 기록하고 그를 점
  3. Result page	
 ![image](https://user-images.githubusercontent.com/28107452/48790379-8af10880-ed32-11e8-87e7-7e0581137d22.png)
  <br>	
+ 
  4. Record Page	
-![image](https://user-images.githubusercontent.com/28107452/48790433-a825d700-ed32-11e8-9177-3a7261f2a18d.png)	
+![g](https://user-images.githubusercontent.com/28107452/49133714-642f6500-f324-11e8-8d49-3270c001380f.png)
+
 <br><br>	
 
 
